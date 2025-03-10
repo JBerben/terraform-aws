@@ -1,9 +1,5 @@
 name: Deploy Terraform
 
-env:
-  TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  TF_VAR_aws_region: ap-southeast-2 
 permissions:
       id-token: write   # This is required for requesting the JWT
       contents: read  
@@ -24,24 +20,35 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ap-southeast-2
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
       - name: Initialize Terraform
-        run: terraform init
+        run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+
+          terraform init
 
       - name: Validate Terraform
-        run: terraform validate
+        run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          
+          terraform validate
 
       - name: Plan Terraform
-        run: terraform plan -out=tfplan
+        run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          
+          terraform plan -out=tfplan
 
       - name: Apply Terraform
-        run: terraform apply -auto-approve tfplan
+        run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          
+          terraform apply -auto-approve tfplan
