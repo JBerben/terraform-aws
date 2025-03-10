@@ -1,3 +1,6 @@
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
+
 resource "aws_iam_role" "hello_lambda_exec" {
   name = "hello-lambda"
 

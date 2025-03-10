@@ -20,35 +20,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Add profile credentials to ~/.aws/credentials
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile test-1
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile test-1
-
       - name: Initialize Terraform
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile test-1
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile test-1
-
-          terraform init
+          terraform init -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
       - name: Validate Terraform
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile test-1
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile test-1
-          
-          terraform validate
+          terraform validate -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
       - name: Plan Terraform
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile test-1
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile test-1
-          
-          terraform plan -out=tfplan
+          terraform plan -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -out=tfplan
 
       - name: Apply Terraform
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile test-1
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile test-1
-          
-          terraform apply -auto-approve tfplan
+          terraform apply -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -auto-approve tfplan
