@@ -1,14 +1,5 @@
 terraform {
 
-    backend "remote" {
-      hostname = "app.terraform.io"
-      organization = "DevopsTask"
-
-      workspaces {
-        name = "terraform-aws"
-      }
-    }
-
     required_providers {
       aws = {
         source  = "hashicorp/aws"
