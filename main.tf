@@ -55,7 +55,7 @@ resource "aws_iam_role_policy_attachment" "hello_lambda_policy" {
 }
 
 resource "aws_lambda_function" "hello" {
-  function_name = "hello"
+  function_name = "hello-world-test"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.lambda_hello.key
