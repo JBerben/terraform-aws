@@ -22,16 +22,16 @@ jobs:
 
       - name: Initialize Terraform
         run: |
-          terraform init -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          terraform init -var='AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
       - name: Validate Terraform
         run: |
-          terraform validate -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          terraform validate -var='AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
       - name: Plan Terraform
         run: |
-          terraform plan -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -out=tfplan
+          terraform plan -var='AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -out=tfplan
 
       - name: Apply Terraform
         run: |
-          terraform apply -var='aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -auto-approve tfplan
+          terraform apply -var='AWS_ACCESS_KEY_IDy=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -auto-approve tfplan
