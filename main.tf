@@ -31,7 +31,7 @@ terraform {
 }
 
 resource "aws_iam_role" "hello_lambda_exec" {
-  name = "hello-lambda"
+  name = "hello-lambda-ci"
 
   assume_role_policy = <<POLICY
 {
