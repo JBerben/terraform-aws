@@ -1,3 +1,35 @@
+provider "aws" {
+    region = "ap-southeast-2"
+}
+
+terraform {
+    
+    backend "s3" {
+        bucket         = aws_s3_object.lambda_hello.bucket
+        key            = aws_s3_object.lambda_hello.key
+        region         = "ap-southeast-2"
+        dynamodb_table = "terraform-lock"
+        encrypt        = true
+    }
+
+    required_providers {
+        aws = {
+            source  = "hashicorp/aws"
+            version = "~> 4.21.0"
+        }
+        random = {
+            source  = "hashicorp/random"
+            version = "~> 3.3.0"
+        }
+        archive = {
+            source  = "hashicorp/archive"
+            version = "~> 2.2.0"
+        }
+    }
+
+    required_version = "~> 1.0"
+}
+
 resource "aws_iam_role" "hello_lambda_exec" {
   name = "hello-lambda"
 
