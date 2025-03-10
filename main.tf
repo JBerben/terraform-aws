@@ -78,7 +78,7 @@ data "archive_file" "lambda_hello" {
   type = "zip"
 
   source_dir  = "${path.module}/lambdas/hello-world"
-  output_path = "${path.module}/zips/hello-world.zip"
+  output_path = "${path.module}/hello-world.zip"
 }
 
 resource "aws_s3_object" "lambda_hello" {
