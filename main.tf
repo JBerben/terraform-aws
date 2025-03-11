@@ -2,6 +2,7 @@ provider "aws" {
     region = "ap-southeast-2"
 }
 
+# Defines Terraform backend using S3 for state management and DynamoDB for state locking
 terraform {
     
     backend "s3" {
@@ -30,7 +31,7 @@ terraform {
     required_version = "~> 1.0"
 }
 
-# Bucket for storing the hello-world lambda
+# Bucket for storing our lambda functions
 resource "random_pet" "lambda_bucket_name" {
   prefix = "lambda"
   length = 2
@@ -41,6 +42,7 @@ resource "aws_s3_bucket" "lambda_bucket" {
   force_destroy = true
 }
 
+# Restrict public access to the Lambda S3 bucket
 resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
   bucket = aws_s3_bucket.lambda_bucket.id
 
@@ -50,7 +52,7 @@ resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
   restrict_public_buckets = true
 }
 
-# hello-world lambda
+# Define IAM role for executing the hello-world Lambda function
 resource "aws_iam_role" "hello_lambda_exec" {
   name = "hello-lambda-ci"
 
@@ -70,11 +72,13 @@ resource "aws_iam_role" "hello_lambda_exec" {
 POLICY
 }
 
+# Attach policy to the Lambda execution role
 resource "aws_iam_role_policy_attachment" "hello_lambda_policy" {
   role       = aws_iam_role.hello_lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# Deploy the hello-world Lambda function to S3 bucket
 resource "aws_lambda_function" "hello" {
   function_name = "hello-world-test"
 
@@ -89,12 +93,14 @@ resource "aws_lambda_function" "hello" {
   role = aws_iam_role.hello_lambda_exec.arn
 }
 
+# Creates a CloudWatch log group for hello-world Lambda function
 resource "aws_cloudwatch_log_group" "hello" {
   name = "/aws/lambda/${aws_lambda_function.hello.function_name}"
 
   retention_in_days = 14
 }
 
+# Zip and upload Lambda js function to S3
 data "archive_file" "lambda_hello" {
   type = "zip"
 
@@ -142,6 +148,7 @@ resource "aws_apigatewayv2_stage" "dev" {
   }
 }
 
+# Creates a CloudWatch log group for API gateway
 resource "aws_cloudwatch_log_group" "main_api_gw" {
   name = "/aws/api-gw/${aws_apigatewayv2_api.main.name}"
 
@@ -157,6 +164,7 @@ resource "aws_apigatewayv2_integration" "lambda_hello" {
   integration_method = "POST"
 }
 
+# Defines GET and POST routes for the API gateway
 resource "aws_apigatewayv2_route" "get_hello" {
   api_id = aws_apigatewayv2_api.main.id
 
@@ -180,7 +188,7 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
 }
 
-# Upload S3 event trigger lambda to "test" bucket
+
 resource "aws_iam_role" "s3_lambda_exec" {
   name = "s3-lambda-role"
 
@@ -230,6 +238,7 @@ resource "aws_iam_role_policy_attachment" "s3_lambda_test_s3_bucket_access" {
   policy_arn = aws_iam_policy.test_s3_bucket_access.arn
 }
 
+# Deploy the S3 file upload Lambda function to S3 bucket
 resource "aws_lambda_function" "s3" {
   function_name = "s3-trigger"
 
@@ -250,6 +259,7 @@ resource "aws_cloudwatch_log_group" "s3" {
   retention_in_days = 14
 }
 
+# Zip the js function for S3 file upload lambda
 data "archive_file" "lambda_s3" {
   type = "zip"
 
