@@ -184,6 +184,56 @@ output "hello_base_url" {
   value = aws_apigatewayv2_stage.dev.invoke_url
 }
 
+# Upload S3 event trigger lambda to "test" bucket
+resource "aws_iam_role" "s3_lambda_exec" {
+  name = "s3-lambda-role"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "s3_lambda_policy" {
+  role       = aws_iam_role.s3_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_policy" "test_s3_bucket_access" {
+  name        = "S3BucketAccess"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "s3:ObjectCreated",
+          "s3:ListBucket"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:s3:::${aws_s3_bucket.lambda_bucket.id}/*"
+      },
+    ]
+  })
+}
+
+# Give policy s3 bucket access
+resource "aws_iam_role_policy_attachment" "s3_lambda_test_s3_bucket_access" {
+  role       = aws_iam_role.s3_lambda_exec.name
+  policy_arn = aws_iam_policy.test_s3_bucket_access.arn
+}
+
 resource "aws_lambda_function" "s3" {
   function_name = "s3-trigger"
 
