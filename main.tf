@@ -180,10 +180,6 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
 }
 
-output "hello_base_url" {
-  value = aws_apigatewayv2_stage.dev.invoke_url
-}
-
 # Upload S3 event trigger lambda to "test" bucket
 resource "aws_iam_role" "s3_lambda_exec" {
   name = "s3-lambda-role"
